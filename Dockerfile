@@ -1,25 +1,66 @@
-FROM node:6-slim
+FROM ubuntu:16.04
 
-#install application dependencies
-RUN DEBIAN_FRONTEND=noninteractive \
-  set -ex \
-  && apt-get update \
-  && apt-get -y install \
-#    xvfb \
-    curl \
-    openjdk-7-jre
+# ----------------
+# Prevent a lot of complaining from apt
+# ----------------
+ENV DEBIAN_FRONTEND noninteractive
 
-#install google-chrome
-RUN set -xe \
-  && curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-  && apt-get update \
-  && apt-get install -y google-chrome-stable \
-  && rm -rf /var/lib/apt/lists/*
+# ----------------
+# Get everything up to date
+# ----------------
+RUN apt-get -qq update
+RUN apt-get -yqq upgrade
 
-#install nightwatch
+# ----------------
+# Prevent more complaining from apt
+# ----------------
+RUN apt-get install -yqq apt-utils
+RUN apt-get install -yqq apt-transport-https
+
+# ----------------
+# Allow us to download and unpack things
+# ----------------
+RUN apt-get install -yqq curl
+RUN apt-get install -yqq wget
+RUN apt-get install -yqq unzip
+RUN apt-get install -yqq bzip2
+RUN apt-get install -yqq xz-utils
+
+# ----------------
+# ?? I forget which thing needs this one
+# ----------------
+RUN apt-get install -yqq ca-certificates
+
+# ----------------
+# For debugging my broken shit in the container
+# ----------------
+RUN apt-get install -yqq nano less
+
+# ----------------
+# Install Java 8 (needed by selenium)
+# ----------------
+RUN apt-get install -yqq openjdk-8-jre-headless
+
+# ----------------
+# Install Node 8
+# ----------------
+ENV NODE_VERSION=8.9.4
+RUN wget -q -O node-v$NODE_VERSION-linux-x64.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz
+RUN tar -xJf node-v$NODE_VERSION-linux-x64.tar.xz -C /usr/local --strip-components=1
+RUN rm node-v$NODE_VERSION-linux-x64.tar.xz
+RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+# ----------------
+# Install Chrome ... and add about 600 MB to our image :-(
+# ----------------
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN echo "deb https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+RUN apt-get update -yq
+RUN apt-get -yqq install google-chrome-stable
+
+# ----------------
+# Set up our nodejs packages to allow our Nightwatch E2E tests to be run from the GitLab CI job.
+# ----------------
 WORKDIR /app
 COPY package.json /app/
 RUN npm install
-COPY ./ /app/
-RUN npm run postinstall
