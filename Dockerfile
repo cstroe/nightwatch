@@ -32,11 +32,6 @@ RUN apt-get install -yqq xz-utils
 RUN apt-get install -yqq ca-certificates
 
 # ----------------
-# For debugging my broken shit in the container
-# ----------------
-RUN apt-get install -yqq nano less
-
-# ----------------
 # Install Java 8 (needed by selenium)
 # ----------------
 RUN apt-get install -yqq openjdk-8-jre-headless
