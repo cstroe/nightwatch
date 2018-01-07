@@ -59,3 +59,5 @@ RUN apt-get -yqq install google-chrome-stable
 WORKDIR /app
 COPY package.json /app/
 RUN npm install
+
+# The end
