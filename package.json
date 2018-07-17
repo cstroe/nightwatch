@@ -18,9 +18,9 @@
   "author": "Dale Anderson",
   "license": "ISC",
   "dependencies": {
-    "chromedriver": "^2.34.0",
-    "nightwatch": "^0.9.19",
-    "selenium-server": "^3.8.1"
+    "chromedriver": "^2.40.0",
+    "nightwatch": "^0.9.21",
+    "selenium-server": "^3.13.0"
   },
   "devDependencies": {
   }

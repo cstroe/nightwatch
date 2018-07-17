@@ -37,9 +37,14 @@ RUN apt-get install -yqq ca-certificates
 RUN apt-get install -yqq openjdk-8-jre-headless
 
 # ----------------
-# Install Node 8
+# Install jq for parsing jquery data (i use jq everywhere, including CI/nightwatch jobs)
 # ----------------
-ENV NODE_VERSION=8.9.4
+RUN apt-get install -y jq
+
+# ----------------
+# Install Node 8 (LTS)
+# ----------------
+ENV NODE_VERSION=8.11.3
 RUN wget -q -O node-v$NODE_VERSION-linux-x64.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz
 RUN tar -xJf node-v$NODE_VERSION-linux-x64.tar.xz -C /usr/local --strip-components=1
 RUN rm node-v$NODE_VERSION-linux-x64.tar.xz
