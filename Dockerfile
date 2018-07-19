@@ -37,9 +37,10 @@ RUN apt-get install -yqq ca-certificates
 RUN apt-get install -yqq openjdk-8-jre-headless
 
 # ----------------
-# Install jq for parsing jquery data (i use jq everywhere, including CI/nightwatch jobs)
+# Allow us to parse json and xml data
 # ----------------
-RUN apt-get install -y jq
+RUN apt-get install -yqq jq
+RUN apt-get install -yqq libxml-xpath-perl
 
 # ----------------
 # Install Node 8 (LTS)
